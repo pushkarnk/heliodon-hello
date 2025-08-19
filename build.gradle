@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.example'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    modularity.inferModulePath.set(true)
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    helidonVersion = '4.1.4'
+}
+
+dependencies {
+    implementation platform("io.helidon:helidon-bom:${helidonVersion}")
+    implementation 'io.helidon.http.media:helidon-http-media-jsonp'
+    implementation 'io.helidon.webserver:helidon-webserver'
+    implementation 'io.helidon.logging:helidon-logging-common'
+    implementation 'org.eclipse.parsson:parsson:1.1.5'
+}
+
+application {
+    mainModule = 'com.example.helidon.hello'
+    mainClass = 'com.example.helidon.hello.Main'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.example.helidon.hello.Main',
+        )
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
